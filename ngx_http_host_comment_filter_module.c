@@ -92,7 +92,11 @@ ngx_http_host_comment_header_filter(ngx_http_request_t *r)
     len = sizeof("<!-- ") - 1
           + ngx_cycle->hostname.len
           + 1
+          /*
           + ngx_cached_http_log_time.len
+          /*/
+          + ngx_cached_http_time.len
+          //*/
           + sizeof(" -->" CRLF) - 1;
 
     // 在内存池申请空间
@@ -112,9 +116,14 @@ ngx_http_host_comment_header_filter(ngx_http_request_t *r)
     ngx_memcpy(ctx->comment.data + ctx->comment.len, " ", 1);
     ctx->comment.len ++;
 
-    // 也可以尝试使用 ngx_cached_http_time
+    /*
     ngx_memcpy(ctx->comment.data + ctx->comment.len, ngx_cached_http_log_time.data, ngx_cached_http_log_time.len);
     ctx->comment.len += ngx_cached_http_log_time.len;
+    /*/
+    // 也可以尝试使用 ngx_cached_http_time
+    ngx_memcpy(ctx->comment.data + ctx->comment.len, ngx_cached_http_time.data, ngx_cached_http_time.len);
+    ctx->comment.len += ngx_cached_http_time.len;
+    //*/
 
     ngx_memcpy(ctx->comment.data + ctx->comment.len, " -->" CRLF, sizeof(" -->" CRLF) - 1);
     ctx->comment.len += sizeof(" -->" CRLF) - 1;
