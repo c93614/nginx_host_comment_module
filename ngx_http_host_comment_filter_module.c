@@ -230,7 +230,7 @@ ngx_http_host_comment_merge_conf(ngx_conf_t *cf, void *parent, void *child) {
     ngx_http_host_comment_conf_t *prev = parent;
     ngx_http_host_comment_conf_t *conf = child;
 
-    ngx_conf_merge_value(conf->enable, prev->enable, 0);
+    ngx_conf_merge_value(conf->enable, prev->enable, 1); // default: on
 
     if (ngx_http_merge_types(cf, &conf->types_keys, &conf->types,
                              &prev->types_keys,&prev->types,
