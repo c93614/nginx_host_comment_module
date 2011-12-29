@@ -191,10 +191,27 @@ ngx_http_host_comment_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
     buf->last_buf = 1;
     buf->memory = 1;
 
+    /*
     nl->buf = buf;
     nl->next = NULL;
     cl->next = nl;
     cl->buf->last_buf = 0; // bug, see http://code.taobao.org/p/tengine/issue/514/
+    */
+
+    // fix privious bug. big thanks to shudu and xiongjunmin and also to their employer - taobao.com
+    if (ngx_buf_size(cl->buf) == 0) {
+        cl->buf = buf;
+    } else {
+        nl = ngx_alloc_chain_link(r->pool);
+        if (nl == NULL) {
+            return NGX_ERROR;
+        }
+
+        nl->buf = buf;
+        nl->next = NULL;
+        cl->next = nl;
+        cl->buf->last_buf = 0;
+    }
 
     return ngx_http_next_body_filter(r, in);
 }
